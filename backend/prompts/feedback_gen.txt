@@ -1,0 +1,25 @@
+def writing_eval_node(state: EvalWorkflowState) -> dict:
+    system_prompt = (PROMPTS / "writing_eval.txt").read_text(encoding="utf-8")
+    llm = _get_llm(with_tools=False)
+
+    messages = [
+        SystemMessage(content=system_prompt),
+        HumanMessage(content=(
+            f"Original query: {state['original_query']}\n\n"
+            f"Consolidated research:\n{state['consolidated_research']}"
+        ))
+    ]
+
+    response = llm.invoke(messages)
+
+    try:
+        data = json.loads(response.content)
+        return {
+            "writing_score": float(data.get("writing_score", 0.0)),
+            "writing_issues": data.get("writing_issues", [])
+        }
+    except Exception as e:
+        return {
+            "writing_score": 0.0,
+            "writing_issues": [f"Writing eval failed to parse: {e}"]
+        }

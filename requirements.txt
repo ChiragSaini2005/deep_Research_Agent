@@ -1,0 +1,9 @@
+langchain
+langgraph
+streamlit
+fastapi
+tavily-python
+dotenv
+langchain-core
+langchain-google-genai
+reportlab
